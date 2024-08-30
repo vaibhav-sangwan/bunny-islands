@@ -22,10 +22,10 @@
 
 from gettext import gettext as _
 
-import gi
+# import gi
 
-gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk
+# gi.require_version("Gtk", "3.0")
+# from gi.repository import Gtk
 
 import pygame
 pygame.init()
@@ -33,7 +33,7 @@ from utils import Utils
 from gamestatemanager import GameStateManager
 from states.puzzleboard import PuzzleBoard
 
-BASE_RES = (640, 360)
+BASE_RES = (640, 480)
 FPS = 30
 
 
@@ -67,8 +67,8 @@ class BunnyIslands:
         while self.is_running:
             curr_state = self.states[self.gameStateManager.get_state()]
 
-            while Gtk.events_pending():
-                Gtk.main_iteration()
+            # while Gtk.events_pending():
+            #     Gtk.main_iteration()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.is_running = False

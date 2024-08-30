@@ -22,7 +22,7 @@
 
 import pygame
 
-BASE_RES = 640, 360
+BASE_RES = 640, 480
 
 
 class Utils:
