@@ -24,6 +24,8 @@ import pygame
 
 from components.grid import Grid
 from components.tile import Tile
+from components.boardbutton import BoardButton
+from components.tilecontroller import TileController
 
 
 class PuzzleBoard:
@@ -32,56 +34,119 @@ class PuzzleBoard:
         self.gameStateManager = game.gameStateManager
         self.game = game
 
-        self.grid = Grid(272, 16)
-        self.tile_list = [
-            Tile("./assets/tile-1.png", []),
-            Tile("./assets/tile-2.png", []),
-            Tile("./assets/tile-3.png", []),
-            Tile("./assets/tile-4.png", []),
-            Tile("./assets/tile-5.png", []),
-            Tile("./assets/tile-6.png", []),
-        ]
+        self.tile_controller = TileController()
+        self.grid = Grid(272, 16, self.tile_controller)
+        self.bg = pygame.image.load("./assets/bg.png")
+        self.bg_rect = self.bg.get_rect(topleft=(0, 0))
 
-        self.focused_tile = None
-        self.prev = ""
+        self.tiles = [
+            Tile("./assets/tile-1.png",
+            [
+                "WWLL",
+                "WLLL",
+                "LLLW",
+                "LRWW",
+                "LLWW",
+                "LWWW",
+                "WWWL",
+                "WWLL"
+            ],
+            320, 32
+            ),
+
+            Tile("./assets/tile-2.png",
+            [
+                "LLWW",
+                "LLLW",
+                "WWLL",
+                "WWLL",
+                "WWBL",
+                "WWLL",
+                "LLLW",
+                "LLWW"
+            ],
+            320, 112
+            ),
+
+            Tile("./assets/tile-3.png",
+            [
+                "WWLL",
+                "WWWL",
+                "LLWW",
+                "LLWW",
+                "RLWW",
+                "LLWW",
+                "WWWL",
+                "WWLL"
+            ],
+            320, 192
+            ),
+
+            Tile("./assets/tile-4.png",
+            [
+                "LLWW",
+                "LLLW",
+                "WLLL",
+                "WWLL",
+                "WWRL",
+                "WWLL",
+                "LWWW",
+                "LLWW"
+            ],
+            320, 272
+            ),
+
+            Tile("./assets/tile-5.png",
+            [
+                "LLWW",
+                "LWWW",
+                "WWLL",
+                "WWLL",
+                "WLBL",
+                "WLLL",
+                "LLWW",
+                "LLWW"
+            ],
+            320, 352
+            ),
+
+            Tile("./assets/tile-6.png",
+            [
+                "LLWW",
+                "LLLW",
+                "WLLL",
+                "WWLL",
+                "WWBL",
+                "WWLL",
+                "LWWW",
+                "LLWW"
+            ],
+            320, 432
+            )
+        ]     
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            for tile in self.tile_list:
+            self.tile_controller.handle_press()
+            self.grid.handle_press()
+            for tile in self.tiles:
                 if tile.check_press():
-                    self.focused_tile = tile
-                    tile.focus()
-                elif tile.focused:
-                    tile.unfocus()
-            if self.grid.handle_press(self.focused_tile):
-                self.focused_tile = None
-        elif event.type == pygame.KEYDOWN:
-            if self.focused_tile:
-                if self.focused_tile.placed:
-                    if event.key == pygame.K_d:
-                        self.focused_tile.placed = False
-                        self.focused_tile = None
-                else:
-                    if event.key == pygame.K_RIGHT:
-                        self.focused_tile.rotate(-90)
-                    elif event.key == pygame.K_LEFT:
-                        self.focused_tile.rotate(90)
+                    self.tile_controller.select(tile)
 
     def render(self):
-        self.screen.fill("white")
+        self.screen.blit(self.bg, self.bg_rect)
         self.grid.draw(self.screen)
         
-        for tile in self.tile_list:
+        for tile in self.tiles:
             tile.draw(self.screen)
+        
+        self.tile_controller.draw(self.screen)
 
     def run(self):
-        self.grid.update(self.focused_tile)
-
-        inactive = 0
-        for tile in self.tile_list:
+        self.grid.update()
+        self.tile_controller.update()
+        
+        for tile in self.tiles:
             tile.update()
-            if not tile.focused and not tile.placed:
-                tile.rect.left = 16 + (inactive * 80)
-                tile.rect.top = 320
-                inactive += 1
+
         self.render()

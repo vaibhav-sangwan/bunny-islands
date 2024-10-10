@@ -22,10 +22,10 @@
 
 from gettext import gettext as _
 
-# import gi
+import gi
 
-# gi.require_version("Gtk", "3.0")
-# from gi.repository import Gtk
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
 
 import pygame
 pygame.init()
@@ -35,6 +35,7 @@ from states.puzzleboard import PuzzleBoard
 
 BASE_RES = (640, 480)
 FPS = 30
+water_blue = "#64a7cd"
 
 
 class BunnyIslands:
@@ -43,11 +44,11 @@ class BunnyIslands:
         self.clock = pygame.time.Clock()
 
     def fill_bg(self):
-        self.render_screen.fill("white")
+        self.render_screen.fill(water_blue)
 
     def run(self):
         self.screen = pygame.Surface(BASE_RES, pygame.SRCALPHA)
-        self.render_screen = pygame.display.set_mode((0, 0))
+        self.render_screen = pygame.display.set_mode((640, 480))
         screen_width = self.render_screen.get_width()
         screen_height = self.render_screen.get_height()
         x_ratio = screen_width / BASE_RES[0]
@@ -67,8 +68,8 @@ class BunnyIslands:
         while self.is_running:
             curr_state = self.states[self.gameStateManager.get_state()]
 
-            # while Gtk.events_pending():
-            #     Gtk.main_iteration()
+            while Gtk.events_pending():
+                Gtk.main_iteration()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.is_running = False
