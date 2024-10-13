@@ -23,6 +23,7 @@
 import pygame
 
 from utils import Utils
+from collections import deque
 red = (172, 50, 50, 150)
 green = (106, 190, 48, 150)
 
@@ -143,6 +144,40 @@ class Grid(pygame.sprite.Sprite):
         j = ((tile.rect.left // 16) - (self.rect.left // 16))
         return self.grid_empty(i, j, m, n)
     
+    # Multisourced BFS that starts from all the blue bunnies
+    # The search proceeds in directions of land only.
+    # If it encounters a red bunny, then the puzzle solution
+    # is incorrect. 
+    def check_win(self):
+        neighbors = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+
+        queue = deque()
+        m = len(self.cells)
+        n = len(self.cells[0])
+        visited = [[False]*n for _ in range(n)]
+
+        for i in range(m):
+            for j in range(n):
+                if self.cells[i][j].status == 'B':
+                    queue.append((i, j))
+                    visited[i][j] = True
+
+        while queue:
+            i, j = queue.popleft()
+            if self.cells[i][j].status == 'R':
+                return False
+            for ne in neighbors:
+                ni, nj = i + ne[0], j + ne[1]
+                if ni < 0 or nj < 0 or ni >= m or nj >= n or visited[ni][nj]:
+                    continue
+                status = self.cells[ni][nj].status
+                if status == 'W' or status == 'E':
+                    continue
+                queue.append((ni, nj))
+                visited[ni][nj] = True
+
+        return True
+
     def update(self):
         cursor_pos = Utils.norm_cursor_pos()
         if self.rect.collidepoint(cursor_pos) and self.controller.tile:

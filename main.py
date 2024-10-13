@@ -32,6 +32,7 @@ pygame.init()
 from utils import Utils
 from gamestatemanager import GameStateManager
 from states.puzzleboard import PuzzleBoard
+from states.resultscreen import ResultScreen
 
 BASE_RES = (640, 480)
 FPS = 30
@@ -63,6 +64,7 @@ class BunnyIslands:
         self.gameStateManager = GameStateManager("puzzle-board")
         self.states = {}
         self.states["puzzle-board"] = PuzzleBoard(self)
+        self.states["result-screen"] = ResultScreen(self)
 
         self.is_running = True
         while self.is_running:

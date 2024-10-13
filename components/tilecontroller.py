@@ -38,11 +38,12 @@ class TileController:
         if self.del_button.check_press():
             self.unselect()
         if self.tile and self.rotclock_button.check_press():
-            self.tile.rotate(90)
-        if self.tile and self.rotaclock_button.check_press():
             self.tile.rotate(-90)
+        if self.tile and self.rotaclock_button.check_press():
+            self.tile.rotate(90)
 
     def select(self, tile, copy=True):
+        self.unselect()
         if copy:
             self.tile = tile.copy()
             self.tile.parent.visible = False

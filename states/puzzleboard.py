@@ -149,4 +149,11 @@ class PuzzleBoard:
         for tile in self.tiles:
             tile.update()
 
+        if len(self.grid.placed_tiles) == 6:
+            won = self.grid.check_win()
+            self.gameStateManager.set_state("result-screen")
+            result_state = self.game.states["result-screen"]
+            result_state.won = won
+            result_state.reset()
+
         self.render()
