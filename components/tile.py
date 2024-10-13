@@ -45,6 +45,8 @@ class Tile(pygame.sprite.Sprite):
             self.cells.append(row)
     
         self.hover = False
+        self.visible = True
+        self.parent = None
     
     def copy(self):
         clone = Tile(self.path, self.cell_status, self.rect.top, self.rect.left)
@@ -53,6 +55,7 @@ class Tile(pygame.sprite.Sprite):
         clone.dims = self.dims
         clone.tint_color = self.tint_color
         clone.cells = self.cells
+        clone.parent = self
         return clone
     
     def rotate(self, angle):
@@ -76,11 +79,13 @@ class Tile(pygame.sprite.Sprite):
         return xt        
 
     def check_press(self):
-        if self.rect.collidepoint(Utils.norm_cursor_pos()):
-            return True
-        return False
+        if not self.visible:
+            return False
+        return self.rect.collidepoint(Utils.norm_cursor_pos())
 
     def draw(self, screen):
+        if not self.visible:
+            return
         screen.blit(self.image, self.rect)
         if self.tint_color:
             overlay = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)

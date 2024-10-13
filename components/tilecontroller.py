@@ -45,11 +45,14 @@ class TileController:
     def select(self, tile, copy=True):
         if copy:
             self.tile = tile.copy()
+            self.tile.parent.visible = False
         else:
             self.tile = tile
         self.tile.rect.midtop = (160, 96)
 
     def unselect(self):
+        if self.tile and self.tile.parent:
+            self.tile.parent.visible = True
         self.tile = None
 
     def draw(self, screen):
