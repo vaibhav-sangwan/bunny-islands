@@ -44,6 +44,8 @@ class Tile(pygame.sprite.Sprite):
                 row.append(Cell(cell_status[i][j]))
             self.cells.append(row)
     
+        self.hover = False
+    
     def copy(self):
         clone = Tile(self.path, self.cell_status, self.rect.top, self.rect.left)
         clone.image = self.image.copy()
@@ -84,6 +86,18 @@ class Tile(pygame.sprite.Sprite):
             overlay = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
             pygame.draw.rect(overlay, self.tint_color, pygame.Rect(0, 0, self.rect.width, self.rect.height))
             screen.blit(overlay, self.rect)
+        if self.hover:
+            pygame.draw.rect(
+                screen, "black",
+                pygame.Rect(
+                    self.rect.left - 5,
+                    self.rect.top - 5,
+                    self.rect.width + 10,
+                    self.rect.height + 10
+                ),
+                2,
+                2
+            )
     
     def update(self):
-        pass
+        self.hover = self.rect.collidepoint(Utils.norm_cursor_pos())

@@ -37,13 +37,16 @@ class TileController:
     def handle_press(self):
         if self.del_button.check_press():
             self.unselect()
-        if self.rotclock_button.check_press():
+        if self.tile and self.rotclock_button.check_press():
             self.tile.rotate(90)
-        if self.rotaclock_button.check_press():
+        if self.tile and self.rotaclock_button.check_press():
             self.tile.rotate(-90)
 
-    def select(self, tile):
-        self.tile = tile.copy()
+    def select(self, tile, copy=True):
+        if copy:
+            self.tile = tile.copy()
+        else:
+            self.tile = tile
         self.tile.rect.midtop = (160, 96)
 
     def unselect(self):

@@ -74,9 +74,7 @@ class Grid(pygame.sprite.Sprite):
         print("\n")
 
     def fill_cells(self, tile):
-        r = ((tile.rect.top // 16) - (self.rect.top // 16))
-        c = ((tile.rect.left // 16) - (self.rect.left // 16))
-        m, n = tile.dims
+        r, c, m, n = self.get_indices(tile)
 
         for i in range(m):
             for j in range(n):
@@ -89,8 +87,33 @@ class Grid(pygame.sprite.Sprite):
         self.placed_tiles.append(self.controller.tile)
         self.controller.tile = None
         self.held_tile = None
-    
+
+    def get_indices(self, tile):
+        r = ((tile.rect.top // 16) - (self.rect.top // 16))
+        c = ((tile.rect.left // 16) - (self.rect.left // 16))
+        m, n = tile.dims
+
+        return r, c, m, n
+
+    def clear_cells(self, tile):
+        r, c, m, n = self.get_indices(tile)
+
+        for i in range(m):
+            for j in range(n):
+                self.cells[r + i][c + j].status = "E"
+
     def handle_press(self):
+        if not self.held_tile:
+            i = 0
+            while i < len(self.placed_tiles):
+                tile = self.placed_tiles[i]
+                if tile.check_press():
+                    self.placed_tiles.pop(i)
+                    self.clear_cells(tile)
+                    self.controller.select(tile, copy=False)
+                else:
+                    i += 1
+
         if self.held_tile and self.is_placeable(self.held_tile):
             self.place_tile(self.held_tile)
 
@@ -133,6 +156,13 @@ class Grid(pygame.sprite.Sprite):
                 self.held_tile.tint_color = red
         else:
             self.held_tile = None
+
+        if not self.held_tile:
+            for tile in self.placed_tiles:
+                if tile.check_press():
+                    tile.tint_color = green
+                else:
+                    tile.tint_color = None
    
 class Cell:
     def __init__(self, status):
