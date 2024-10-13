@@ -3,6 +3,8 @@ What is this?
 
 Bunny Islands is a puzzle game for the Sugar desktop.
 
+![image](https://github.com/user-attachments/assets/dd8e11b2-bb73-4f79-ac82-2fe608b15969)
+
 There are 6 pieces of a puzzle. On each piece, there's a bunny which is either colored red or green. The goal of the puzzle is to organise each piece on the board in such a fashion that the red colored bunnies and green colored bunnies are never on the same island. There are 400+ solutions to this puzzle. 
 
 
