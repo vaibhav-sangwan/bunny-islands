@@ -34,10 +34,13 @@ class PuzzleBoard:
         self.gameStateManager = game.gameStateManager
         self.game = game
 
-        self.tile_controller = TileController()
-        self.grid = Grid(272, 16, self.tile_controller)
         self.bg = pygame.image.load("./assets/bg.png")
         self.bg_rect = self.bg.get_rect(topleft=(0, 0))
+        self.reset()
+
+    def reset(self):
+        self.tile_controller = TileController()
+        self.grid = Grid(272, 16, self.tile_controller)
 
         self.tiles = [
             Tile("./assets/tile-1.png",
@@ -123,7 +126,7 @@ class PuzzleBoard:
             ],
             320, 432
             )
-        ]     
+        ]
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -150,10 +153,12 @@ class PuzzleBoard:
             tile.update()
 
         if len(self.grid.placed_tiles) == 6:
-            won = self.grid.check_win()
+            won, snap, snap_rect = self.grid.check_win()
             self.gameStateManager.set_state("result-screen")
             result_state = self.game.states["result-screen"]
             result_state.won = won
+            result_state.grid_snap = snap
+            result_state.grid_snap_rect = snap_rect
             result_state.reset()
 
         self.render()

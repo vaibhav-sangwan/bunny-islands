@@ -59,7 +59,7 @@ class Tile(pygame.sprite.Sprite):
         return clone
     
     def rotate(self, angle):
-        self.image = pygame.transform.rotate(self.image, angle)
+        self.image = pygame.transform.rotate(self.image, -angle)
         self.rect = self.image.get_rect(center=(self.rect.center))
 
         if angle == 90:

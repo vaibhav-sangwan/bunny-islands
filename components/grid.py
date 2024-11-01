@@ -160,12 +160,14 @@ class Grid(pygame.sprite.Sprite):
             for j in range(n):
                 if self.cells[i][j].status == 'B':
                     queue.append((i, j))
-                    visited[i][j] = True
+                    visited[i][j] = (-1, -1)
 
         while queue:
             i, j = queue.popleft()
             if self.cells[i][j].status == 'R':
-                return False
+                fail_path = self.get_failed_path(i, j, visited)
+                snapshot, snapshot_rect = self.get_snapshot(fail_path)
+                return False, snapshot, snapshot_rect
             for ne in neighbors:
                 ni, nj = i + ne[0], j + ne[1]
                 if ni < 0 or nj < 0 or ni >= m or nj >= n or visited[ni][nj]:
@@ -174,9 +176,42 @@ class Grid(pygame.sprite.Sprite):
                 if status == 'W' or status == 'E':
                     continue
                 queue.append((ni, nj))
-                visited[ni][nj] = True
+                visited[ni][nj] = (i, j)
 
-        return True
+        snapshot, snapshot_rect = self.get_snapshot()
+        return True, snapshot, snapshot_rect
+
+    def get_failed_path(self, i, j, visited):
+        if i == -1:
+            return []
+        failed_path = self.get_failed_path(visited[i][j][0], visited[i][j][1], visited)
+        failed_path.append((i, j))
+        return failed_path
+
+    def get_snapshot(self, fail_path=[]):
+        snapshot = self.image.copy()
+        for tile in self.placed_tiles:
+            x = tile.rect.x - self.rect.x
+            y = tile.rect.y - self.rect.y
+            snapshot.blit(
+                tile.image,
+                pygame.Rect(x, y, tile.rect.width, tile.rect.height)
+            )
+        snapshot_rect = snapshot.get_rect()
+
+        overlay = pygame.Surface((snapshot_rect.width, snapshot_rect.height), pygame.SRCALPHA)
+        for cell in fail_path:
+            pygame.draw.rect(
+                overlay, red,
+                pygame.Rect(
+                    cell[1] * 16,
+                    cell[0] * 16,
+                    16,
+                    16
+                )
+            )
+        snapshot.blit(overlay, snapshot_rect)
+        return snapshot, snapshot_rect
 
     def update(self):
         cursor_pos = Utils.norm_cursor_pos()
